@@ -1,9 +1,12 @@
 package io.eagletech.bankingApplication;
 
+import io.eagletech.bankingApplication.exceptions.BankingApplicationException;
 import io.eagletech.bankingApplication.models.Bank;
 import io.eagletech.bankingApplication.models.CentralBank;
+import io.eagletech.bankingApplication.models.Customer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class MainApplication {
@@ -46,14 +49,14 @@ public class MainApplication {
                 Welcome 
                 1 -> Register A New Bank
                 2 -> View All Banks
-                3 -> Delete Bank
+                3 -> Verify BVN
                 4 -> Logout
                 """;
         int userChoice = collectIntegerInput(message);
         switch (userChoice) {
             case 1 -> gotoBankRegistrationPage();
             case 2 -> gotoViewAllBanks();
-            case 3 -> gotoDeleteBanks();
+            case 3 -> gotoBvnVerificationPage();
             case 4 -> displayHomeMessage();
             default -> {
                 display("Incorrect Input, please try again");
@@ -62,8 +65,41 @@ public class MainApplication {
         }
     }
 
+    private static void gotoBvnVerificationPage() {
+        String bvnNumber = collectStringInput("Enter BVN to validate");
+        String accountNumber = collectStringInput("Enter account number");
+        if(centralBank.validate(bvnNumber)){
+            try {
+                Customer customer = centralBank.findCustomerByBvn(bvnNumber);
+                for (Account account : customer.getMyAccount()) {
+                    if (account.getAccountNumber().equals(accountNumber)) {
+                        display("Verified");
+                        display(customer.toString());
+                        display(account.toString());
+                        break;
+                    }
+                }
+                display("invalid BVN");
+                gotoCentralBankPage();
+            }
+            catch (BankingApplicationException ex){
+                display(ex.getMessage());
+                gotoCentralBankPage();
+            }
+        }
+        else {
+            display("invalid BVN number");
+            gotoCentralBankPage();
+
+        }    }
+
+
     private static void gotoViewAllBanks() {
+        //todo to make it tabular
         List<Bank> banks = centralBank.findAllBanks();
+        banks.forEach(bank -> {
+            display(bank.toString());
+        });
     }
 
     private static void gotoBankRegistrationPage() {
@@ -80,6 +116,7 @@ public class MainApplication {
 
     private static String collectStringInput(String prompt) {
         Scanner scanner = new Scanner(System.in);
+        display(prompt);
         return scanner.nextLine();
     }
 

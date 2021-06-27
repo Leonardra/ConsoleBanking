@@ -90,6 +90,14 @@ public class CentralBank {
         return registeredBanks.findAll();
     }
 
+    public Customer findCustomerByBvn(String bvnNumber) {
+        Customer customer = bvnDatabase.get(bvnNumber);
+        if(customer== null){
+            throw new BankingApplicationException("Invalid BVN number");
+        }
+        return bvnDatabase.get(bvnNumber);
+    }
+
     private static class CentralBankSingleTonHelper{
         private static final CentralBank instance = new CentralBank();
     }
