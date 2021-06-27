@@ -32,6 +32,7 @@ public class Account implements Storable {
         customerBvn = customer.getBvn();
         this.bankName = bankName;
         successfulTransactions = new ArrayList<>();
+        pin = 0;
 
 
     }
@@ -106,5 +107,9 @@ public class Account implements Storable {
 
     public List<Transaction> getTransaction() {
         return successfulTransactions;
+    }
+
+    public void save(Transaction transaction) {
+        successfulTransactions.add(transaction);
     }
 }

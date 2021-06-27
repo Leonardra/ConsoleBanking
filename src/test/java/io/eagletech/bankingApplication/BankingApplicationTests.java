@@ -337,12 +337,13 @@ public class BankingApplicationTests {
         chibuzoAccount.updatePin(0, 1111);
         String chibuzoAccountNumber = chibuzoAccount.getAccountNumber();
         gtBank.depositMoneyIntoAccount(BigDecimal.valueOf(2500), chibuzoAccountNumber);
+        gtBank.depositMoneyIntoAccount(BigDecimal.valueOf(4500), chibuzoAccountNumber);
 
-        Transaction transaction = chibuzoAccount.getTransaction().get(0);
-        NotificationService notifier = new SmsNotification();
-        Alert alert = notifier.createAlert(chibuzoAccount, transaction);
-        assertThat(alert, is(notNullValue()));
-        System.out.println(alert);
+//        Transaction transaction = chibuzoAccount.getTransaction().get(0);
+//        NotificationService notifier = new SmsNotification();
+//        Alert alert = notifier.createAlert(chibuzoAccount, transaction);
+//        assertThat(alert, is(notNullValue()));
+//        System.out.println(alert);
 
     }
 

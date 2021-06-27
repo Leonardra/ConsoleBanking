@@ -3,6 +3,10 @@ package io.eagletech.bankingApplication.notification;
 import io.eagletech.bankingApplication.Account;
 import io.eagletech.bankingApplication.models.Transaction;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 public class SmsAlert extends Alert {
     private String alertTitle;
     private String amount;
@@ -16,12 +20,13 @@ public class SmsAlert extends Alert {
 
     public SmsAlert(Account chibuzoAccount, Transaction transaction) {
         super();
+        String date = transaction.getTransactionDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a"));
         transactionType = transaction.getTransactionType().toString();
         alertTitle = transactionType + " Notification";
         amount = transaction.getTransactionAmount().toString();
         accountNumber = chibuzoAccount.getAccountNumber();
         actorName = transaction.getActorName();
-        transactionDate = transaction.getTransactionDate().toString();
+        transactionDate = date;
         availableBalance = chibuzoAccount.calculateAccountBalance().toString();
         transactionId = transaction.getTransactionId();
         amountInWords = amount;
@@ -34,17 +39,16 @@ public class SmsAlert extends Alert {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(alertTitle.toUpperCase()).append("\n");
-        stringBuilder.append(transactionId).append("\n");
-        stringBuilder.append(transactionDate).append("\n");
-        stringBuilder.append(accountNumber).append("\n");
-        stringBuilder.append(amount).append("\n");
-        stringBuilder.append(actorName).append("\n");
-        stringBuilder.append(transactionType).append("\n");
-        stringBuilder.append(availableBalance).append("\n");
+        String alert = alertTitle.toUpperCase()+"\n";
+        alert+= "TID: "+ transactionId+"\n";
+        alert+= "Transaction Date: " + transactionDate +"\n";
+        alert+= "Account Number: " + accountNumber+"\n";
+        alert+= "Transaction Amount: " + amount+"\n";
+        alert+= "Account Name: " + actorName+"\n";
+        alert+= "Transaction Type: " + transactionType+"\n";
+        alert+= "Available Balance: " + availableBalance+"\n";
 
-        return stringBuilder.toString();
+        return alert;
 
     }
 }

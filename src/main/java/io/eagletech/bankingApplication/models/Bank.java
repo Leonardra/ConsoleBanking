@@ -125,7 +125,7 @@ public  class Bank implements Storable {
 
     private Transaction saveTransaction(Account optionalAccount, TransactionType transactionType, BigDecimal transactionAmount) {
         Transaction transaction = new Transaction(generateTransactionId(transactionType, optionalAccount.getAccountNumber()), transactionType, transactionAmount, optionalAccount.getAccountName());
-        optionalAccount.getTransaction().add(transaction);
+        optionalAccount.save(transaction);
         return transaction;
     }
 
@@ -151,11 +151,15 @@ public  class Bank implements Storable {
     }
 
     public void transfer(TransferRequest transferRequest) throws BankingApplicationException{
-        Optional<Account> senderAccount = accountDatabase.findById(transferRequest.getSenderAccountNumber());
-        Optional<Account> receiverAccount = accountDatabase.findById(transferRequest.getReceiverAccountNumber());
+        String senderAccountNumber = transferRequest.getSenderAccountNumber();
+        String receiverAccountNumber = transferRequest.getReceiverAccountNumber();
+        BigDecimal amountToTransfer = transferRequest.getAmountToTransfer();
+        int senderAccountPin = transferRequest.getSenderAccountPin();
+        Optional<Account> senderAccount = accountDatabase.findById(senderAccountNumber);
+        Optional<Account> receiverAccount = accountDatabase.findById(receiverAccountNumber);
         if(senderAccount.isPresent() && receiverAccount.isPresent()){
-            withDrawMoneyFrom(transferRequest.getSenderAccountNumber(), transferRequest.getAmountToTransfer(), transferRequest.getSenderAccountPin(), TRANSFER_OUT);
-            depositMoneyIntoAccount(transferRequest.getAmountToTransfer(), transferRequest.getReceiverAccountNumber(), TRANSFER_IN);
+            withDrawMoneyFrom(senderAccountNumber, amountToTransfer, senderAccountPin, TRANSFER_OUT);
+            depositMoneyIntoAccount(amountToTransfer, receiverAccountNumber, TRANSFER_IN);
         }
     }
 
@@ -166,22 +170,20 @@ public  class Bank implements Storable {
         centralBank.transferFundsWith(transferRequest);
     }
 
-    public void depositMoneyIntoAccount(BigDecimal valueOf, String accountNumber) {
-        depositMoneyIntoAccount(valueOf, accountNumber, CREDIT);
+    public void depositMoneyIntoAccount(BigDecimal amount, String accountNumber) {
+        depositMoneyIntoAccount(amount, accountNumber, CREDIT);
     }
 
-    public void withDrawMoneyFrom(String accountNumber, BigDecimal valueOf, int i) {
-        withDrawMoneyFrom(accountNumber,valueOf, i,DEBIT);
+    public void withDrawMoneyFrom(String accountNumber, BigDecimal amount, int accountPin) {
+        withDrawMoneyFrom(accountNumber,amount, accountPin,DEBIT);
     }
 
     @Override
     public String toString(){
-        StringBuilder bankToString = new StringBuilder();
-        bankToString.append("Bank Name: ").append(bankFullName).append("\n");
-        bankToString.append("Bank Short Name: ").append(bankShortName).append("\n");
-        bankToString.append("Bank Code: ").append(bankCode).append("\n");
 
-        return bankToString.toString();
+        return "Bank Name: " + bankFullName + "\n" +
+                "Bank Short Name: " + bankShortName + "\n" +
+                "Bank Code: " + bankCode + "\n";
     }
 
 }

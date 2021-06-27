@@ -6,6 +6,7 @@ import io.eagletech.bankingApplication.dtos.requestModels.TransferRequest;
 import io.eagletech.bankingApplication.exceptions.BankingApplicationException;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.SplittableRandom;
@@ -83,6 +84,10 @@ public class CentralBank {
 
     private Optional<Bank> findBankByShortName(String receiverBank) {
         return registeredBanks.findByName(receiverBank);
+    }
+
+    public List<Bank> findAllBanks() {
+        return registeredBanks.findAll();
     }
 
     private static class CentralBankSingleTonHelper{
