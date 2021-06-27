@@ -43,13 +43,16 @@ public class MainApplication {
     private static void gotoBanksLoginPage() {
         String bankCode = collectStringInput("enter Bank sort code");
         String pin = collectStringInput("enter bank pin");
-        var bank= centralBank.findBankByBankCode(bankCode);
         if(pin.equals("1234")) {
-            if (bank != null) {
-                activeBank = bank;
+            try {
+                activeBank = centralBank.findBankByBankCode(bankCode);
+                display(activeBank.toString());
+                display("Login successful");
                 gotoBankHomePage();
-            } else {
+            }
+            catch (BankingApplicationException ex){
                 display("Invalid bank login");
+                display(ex.getMessage());
                 displayHomeMessage();
             }
         }
