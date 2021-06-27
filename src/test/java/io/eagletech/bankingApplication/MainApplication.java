@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class MainApplication {
     private static CentralBank centralBank;
+    private static Bank activeBank;
     public static void main(String[] args) {
         displayHomeMessage();
     }
@@ -26,14 +27,39 @@ public class MainApplication {
         int userChoice = collectIntegerInput(message);
         switch (userChoice) {
             case 1 -> gotoCentralBankLoginPage();
-            case 2 -> gotoBanksLoginPage();
-            case 3 -> gotoCustomerLoginPage();
+            case 2 -> gotoBanksLoginPage(); //todo not done yet
+            case 3 -> gotoCustomerLoginPage(); //todo not done yet
             case 4 -> System.exit(0);
             default -> {
                 display("Incorrect Input, please try again");
                 displayHomeMessage();
             }
         }
+    }
+
+    private static void gotoCustomerLoginPage() {
+    }
+
+    private static void gotoBanksLoginPage() {
+        String bankCode = collectStringInput("enter Bank sort code");
+        String pin = collectStringInput("enter bank pin");
+        var bank= centralBank.findBankByBankCode(bankCode);
+        if(pin.equals("1234")) {
+            if (bank != null) {
+                activeBank = bank;
+                gotoBankHomePage();
+            } else {
+                display("Invalid bank login");
+                displayHomeMessage();
+            }
+        }
+        else{
+            display("Invalid bank login");
+            displayHomeMessage();
+        }
+    }
+
+    private static void gotoBankHomePage() {
     }
 
     private static void gotoCentralBankLoginPage() {
